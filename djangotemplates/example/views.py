@@ -12,6 +12,9 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 
+import time
+
+
 # @require_http_methods(['GET'])
 # def search(request):
 #     q = request.GET.get('q')
@@ -22,7 +25,12 @@ from django.core.cache import cache
 
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
-def profile(request):
+call_count = None
+TIME_PERIOD = 300   # time period in seconds
+
+start_time = time.time()
+def profile(request, count = [0]):
+    
     if request.GET:
         keyword = request.GET['q']
         if cache.get(keyword):
@@ -43,7 +51,7 @@ def profile(request):
 
 
 def SearchStack(keyword):
-    url = 'https://api.stackexchange.com/search/advanced?site=stackoverflow.com&q='+keyword+'&page=2&pagesize=2&fromdate=1598918400&todate=1605916800&order=desc&sort=activity'
+    url = 'https://api.stackexchange.com/search/advanced?site=stackoverflow.com&q='+keyword+'&page=40&pagesize=4&fromdate=1598918400&todate=1605916800&order=desc&sort=activity'
     headers = {'Accept': 'application/json'}
     r = requests.get(url, headers= headers)
 
